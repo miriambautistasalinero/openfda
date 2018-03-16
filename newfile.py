@@ -1,10 +1,10 @@
 a = 1
 b= 0
-
+for i in range(5):
+    print(i)
 print("Hello from PyCharm 0")
 print("Hello from PyCharm 1")
 print("Hello from PyCharm 2")
-print(a/b)
 print("Hello from PyCharm 3")
 print("Hello from PyCharm 4")
 print("Hello from PyCharm 5")
