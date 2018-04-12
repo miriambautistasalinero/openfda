@@ -20,16 +20,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         d_labelling = json.loads(repos_raw)
 
-        #d_labelling = d_labelling['results']
-        #drug_id = "<ol>" + d_labelling[0]['id'] + "<\ol>"
-
-
         drug_id = ''
         for elem in range(len(d_labelling["results"])):
             drug_id = drug_id + "<ol>" + d_labelling["results"][elem]["id"] + "</ol>"
-
-
-
 
 
         # Send response status code
