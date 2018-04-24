@@ -26,10 +26,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 message = s.read()#lee search y lo ejecuta
             self.wfile.write(bytes(message, "utf8")) #esto es lo que le llega al cliente
         #en caso de que tenga más parametros que solo \
-        elif "search" in self.path:
+        elif "search?" in self.path:
             parame = self.path.split("?")[1]
             drug = parame.split("&")[0].split("=")[1]
-            limit= parame.split("&")[1].split("=")[1]
+            limit = parame.split("&")[1].split("=")[1]
 
             headers = {'User-Agent': 'http-client'}
 
