@@ -48,17 +48,17 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             parame =self.path.split("?")[1]
             active_ingredient = parame.split("=")[1]
 
-        headers = {'User-Agent': 'http-client'}
+            headers = {'User-Agent': 'http-client'}
 
-        conn = http.client.HTTPSConnection("api.fda.gov")
-        conn.request("GET", "/drug/label.json?searchDrug?active_ingredient=" + active_ingredient, None, headers)
-        r1 = conn.getresponse()
-        print(r1.status, r1.reason)
-        repos_raw = r1.read().decode("utf-8")
-        conn.close()
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            conn.request("GET", "/drug/label.json?searchDrug?active_ingredient=" + active_ingredient, None, headers)
+            r1 = conn.getresponse()
+            print(r1.status, r1.reason)
+            repos_raw = r1.read().decode("utf-8")
+            conn.close()
 
-        d_labelling = json.loads(repos_raw)
-        self.wfile.write(bytes(str(d_labelling), "utf8"))
+            d_labelling = json.loads(repos_raw)
+            self.wfile.write(bytes(str(d_labelling), "utf8"))
 
         return
 
