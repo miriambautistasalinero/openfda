@@ -51,14 +51,55 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             headers = {'User-Agent': 'http-client'}
 
             conn = http.client.HTTPSConnection("api.fda.gov")
-            conn.request("GET", "/drug/label.json?searchDrug?active_ingredient=" + active_ingredient, None, headers)
+            conn.request("GET", "/drug/label.json?search=active_ingredient=" + active_ingredient, None, headers)
             r1 = conn.getresponse()
             print(r1.status, r1.reason)
             repos_raw = r1.read().decode("utf-8")
             conn.close()
 
             d_labelling = json.loads(repos_raw)
-            self.wfile.write(bytes(str(d_labelling), "utf8"))
+
+            for elem in range(len(d_labelling["results"])):
+                drug_ai = "<li>" + d_labelling["results"][elem]["openfda"]["brand_name"][0] + "</li>"
+
+                self.wfile.write(bytes(str(drug_ai), "utf8"))
+
+        elif "searchCompany" in self.path:
+            parame =self.path.split("?")[1]
+            company_name = parame.split("=")[1]
+
+            headers = {'User-Agent': 'http-client'}
+
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            conn.request("GET", "/drug/label.json?search=openfda.manufacturer_name=" + company_name, None, headers)
+            r1 = conn.getresponse()
+            print(r1.status, r1.reason)
+            repos_raw = r1.read().decode("utf-8")
+            conn.close()
+
+            d_labelling = json.loads(repos_raw)
+
+            for elem in range(len(d_labelling["results"])):
+                drug_mn = "<li>" + d_labelling["results"][elem]["openfda"]["brand_name"][0] + "</li>"
+
+                self.wfile.write(bytes(str(drug_mn), "utf8"))
+        elif "limit":
+            parame = self.path.split("?")[1]
+            listd = parame.split("=")[1]
+
+            headers = {'User-Agent': 'http-client'}
+
+            conn = http.client.HTTPSConnection("api.fda.gov")
+            conn.request("GET", "/drug/label.json?limit=" + listd , None, headers)
+            r1 = conn.getresponse()
+            print(r1.status, r1.reason)
+            repos_raw = r1.read().decode("utf-8")
+            conn.close()
+
+            d_labelling = json.loads(repos_raw)
+
+            for elem in range(len(d_labelling["results"])):
+                drug_mn = "<li>" + d_labelling["results"][elem]["openfda"]["brand_name"][0] + "</li>"
 
         return
 
