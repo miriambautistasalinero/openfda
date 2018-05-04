@@ -40,6 +40,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             conn.close()
 
             d_labelling = json.loads(repos_raw)
+
             self.wfile.write(bytes(str(d_labelling), "utf8"))
 
         return
