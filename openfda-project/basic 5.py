@@ -43,8 +43,11 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             d_labelling = json.loads(repos_raw)
             for elem in range(len(d_labelling)):
+                #try:
                 generic_name= "<li>" + d_labelling["results"][elem]["openfda"]["brand_name"][0] + "</li>"
                 self.wfile.write(bytes(str(generic_name), "utf8"))
+                #except:
+
 
         #search for the active ingredient
         elif "searchDrug" in self.path:
@@ -53,22 +56,22 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             limit = parame.split("&")[1]
 
             headers = {'User-Agent': 'http-client'}
-
+            query1="/drug/label.json?search=active_ingredient=" + active_ingredient + "&" + limit
             conn = http.client.HTTPSConnection("api.fda.gov")
             conn.request("GET", "/drug/label.json?search=active_ingredient=" + active_ingredient + "&" + limit, None, headers)
+            print(query1)
             r1 = conn.getresponse()
             print(r1.status, r1.reason)
             repos_raw = r1.read().decode("utf-8")
             conn.close()
 
             d_labelling = json.loads(repos_raw)
-
-            try:
-                for i in range(len(d_labelling["results"])):
+            for i in range(len(d_labelling["results"])):
+                try:
                     drug_ai = "<li>" + d_labelling["results"][i]["openfda"]["brand_name"][0] + "</li>"
                     self.wfile.write(bytes(str(drug_ai), "utf8"))
-            except KeyError:
-                drugai_error = "<li>" + "Not Found" + "</li>"
+                except KeyError:
+                    drugai_error = "<li>" + "Not Found" + "</li>"
 
 
         elif "searchCompany" in self.path:
