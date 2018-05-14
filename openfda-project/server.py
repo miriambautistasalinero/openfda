@@ -42,12 +42,13 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             with open("info.html", "w"):
                 self.wfile.write(bytes("<ol>" + "\n", "utf8"))
-                for i in d_labelling["results"]:
+                for i in range(len(d_labelling["results"])):
                     try:
-                        message = "<li>" + i["openfda"]["brand_name"][0] + "</li>" + "\n"
+                        drug_ai = "<li>" + d_labelling["results"][i]["openfda"]["brand_name"][0] + "</li>"
+                        self.wfile.write(bytes(str(drug_ai), "utf8"))
                     except KeyError:
-                        message = "<li>" + "Unknown" + "</li>" + "\n"
-                    self.wfile.write(bytes(message, "utf8"))
+                        drugai_error = "<li>" + "Not Found" + "</li>"
+                        self.wfile.write(bytes(str(drugai_error), "utf8"))
 
         def search_company(company, limit):
 
@@ -63,16 +64,17 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             repos_raw = r1.read().decode("utf-8")
             conn.close()
 
-            repos = json.loads(repos_raw)
+            d_labelling = json.loads(repos_raw)
 
             with open("info.html", "w"):
                 self.wfile.write(bytes("<ol>" + "\n", "utf8"))
-                for elem in repos["results"]:
+                for i in range(len(d_labelling["results"])):
                     try:
-                        message = "<li>" + elem["openfda"]["brand_name"][0] + "</li>" + "\n"
+                        drug_mn = "<li>" + d_labelling["results"][i]["openfda"]["brand_name"][0] + "</li>"
+                        self.wfile.write(bytes(str(drug_mn), "utf8"))
                     except KeyError:
-                        message = "<li>" + "Unknown" + "</li>" + "\n"
-                    self.wfile.write(bytes(message, "utf8"))
+                        companyerror = "<li>" + "Not found" + "</li>"
+                        self.wfile.write(bytes(str(companyerror), "utf8"))
 
         def list_drugs(limit):
 
