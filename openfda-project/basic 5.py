@@ -22,46 +22,24 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         # Send message back to client
         message = ''
         if self.path == "/":
-            with open("basicfinal.html", "r") as s: #we open search
+            with open("openfda.html", "r") as s: #we open search
                 message = s.read()#lee search y lo ejecuta
             self.wfile.write(bytes(message, "utf8")) #esto es lo que le llega al cliente
         #en caso de que tenga más parametros que solo \
-
-        elif "search?" in self.path:
-            parame = self.path.split("?")[1]
-            drug = parame.split("&")[0].split("=")[1]
-            limit = parame.split("&")[1].split("=")[1]
-
-            headers = {'User-Agent': 'http-client'}
-
-            conn = http.client.HTTPSConnection("api.fda.gov")
-            conn.request("GET", "/drug/label.json?search=generic_name:" + drug + "&limit=" + limit , None, headers)
-            r1 = conn.getresponse()
-            print(r1.status, r1.reason)
-            repos_raw = r1.read().decode("utf-8")
-            conn.close()
-
-            d_labelling = json.loads(repos_raw)
-            for elem in range(len(d_labelling)):
-                #try:
-                generic_name= "<li>" + d_labelling["results"][elem]["openfda"]["brand_name"][0] + "</li>"
-                self.wfile.write(bytes(str(generic_name), "utf8"))
-                #except:
-
 
         #search for the active ingredient
         elif "searchDrug" in self.path:
             parame =self.path.split("?")[1]
             active_ingredient = parame.split("=")[1].split("&")[0]
-            limit = parame.split("&")[1]
+            try:
+                limit = parame.split("&")[1]
+            except IndexError:
+                limit = 10
 
-            if limit ="":
-                limit=10
             headers = {'User-Agent': 'http-client'}
             query1="/drug/label.json?search=active_ingredient=" + active_ingredient + "&" + limit
             conn = http.client.HTTPSConnection("api.fda.gov")
             conn.request("GET", "/drug/label.json?search=active_ingredient=" + active_ingredient + "&" + limit, None, headers)
-            print(query1)
             r1 = conn.getresponse()
             print(r1.status, r1.reason)
             repos_raw = r1.read().decode("utf-8")
@@ -80,7 +58,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "searchCompany" in self.path:
             parame =self.path.split("?")[1]
             company_name = parame.split("=")[1].split("&")[0]
-            limit = parame.split("&")[1]
+            if parame.split("&")[1] == '':
+                limit = "10"
+            else:
+                limit = parame.split("&")[1]
 
             headers = {'User-Agent': 'http-client'}
             query = "/drug/label.json?search=openfda.manufacturer_name:" + company_name + "&"+ limit
@@ -104,7 +85,11 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif "listDrug" in self.path:
             parame = self.path.split("?")[1]
-            listdrug = parame.split("=")[1]
+            if parame.split("=")[1]== '':
+                listdrug= str(10)
+            else:
+                listdrug= parame.split("=")[1]
+
 
             headers = {'User-Agent': 'http-client'}
 
@@ -128,7 +113,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif "listCompany" in self.path:
             parame = self.path.split("?")[1]
-            listcompany = parame.split("=")[1]
+            if  parame.split("=")[1]=="":
+                listcompany = str(10)
+            else:
+                listcompany = parame.split("=")[1]
 
             headers = {'User-Agent': 'http-client'}
 
@@ -152,7 +140,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif "listWarnings" in self.path:
             parame = self.path.split("?")[1]
-            listcompany = parame.split("=")[1]
+            if parame.split("=")[1]== "":
+                listcompany= str(10)
+            else:
+                listcompany = parame.split("=")[1]
 
             headers = {'User-Agent': 'http-client'}
 
@@ -177,8 +168,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
 
         return
-
-    #search este dentro de self.path
 
 Handler = http.server.SimpleHTTPRequestHandler
 Handler = testHTTPRequestHandler
