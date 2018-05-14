@@ -154,6 +154,18 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         path = self.path
 
+        if "secret" in path:
+            status =401
+            print("You are nor authorized!Code:"+ str(status))
+
+        elif "redirect" in path:
+            status = 302
+            print("You are being redirected. Code:" + str(status))
+        else:
+            status =404
+        
+
+
         if path == "/":
             with open("search.html") as f:
                 message = f.read()
@@ -215,13 +227,14 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             list_warnings(limit)
             file = 'info.html'
             send_file(file)
+
         elif "secret" in path:
             status +=401
-            print("You are nor authorized!Code:"+ status)
+            print("You are nor authorized!Code:"+ str(status))
 
         elif "redirect" in path:
             status += 302
-            print("You are being redirected. Code:" + status)
+            print("You are being redirected. Code:" + str(status))
         else:
             status +=404
             with open("not_found.html") as f:
