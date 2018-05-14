@@ -114,17 +114,18 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             repos_raw = r1.read().decode("utf-8")
             conn.close()
 
-            repos = json.loads(repos_raw)
+            d_labelling = json.loads(repos_raw)
 
             with open("info.html", "w"):
                 self.wfile.write(bytes("<ol>" + "\n", "utf8"))
-                for element in repos["results"]:
+                for i in range(len(d_labelling["results"])):
                     try:
-                        elementli = "<li>" + element["openfda"]["manufacturer_name"][0] + "</li>" + "\n"
-                    except KeyError:
-                        elementli = "<li>" + "Unknown" + "</li>" + "\n"
-                    self.wfile.write(bytes(elementli, "utf8"))
+                        company_list = "<li>" + d_labelling["results"][i]["openfda"]["manufacturer_name"][0] + "</li>"
+                        self.wfile.write(bytes(str(company_list), "utf8"))
 
+                    except KeyError:
+                        company_error = "<li>" + "Not Found" + "</li>"
+                        self.wfile.write(bytes(str(company_error), "utf8"))
         def list_warnings(limit):
 
             print(str(self.path))
@@ -138,16 +139,18 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             repos_raw = r1.read().decode("utf-8")
             conn.close()
 
-            repos = json.loads(repos_raw)
+            d_labelling = json.loads(repos_raw)
 
             with open("info.html", "w"):
                 self.wfile.write(bytes("<ol>" + "\n", "utf8"))
-                for element in repos["results"]:
+                for i in range(len(d_labelling["results"])):
                     try:
-                        elementli = "<li>" + element["warnings"][0] + "</li>" + "\n"
+                        warning = "<li>" + d_labelling["results"][i]["warnings"][0] + "</li>"
+                        self.wfile.write(bytes(str(warning), "utf8"))
+
                     except KeyError:
-                        elementli = "<li>" + "Unknown" + "</li>" + "\n"
-                    self.wfile.write(bytes(elementli, "utf8"))
+                        warning_error = "<li>" + "Not Found" + "</li>"
+                        self.wfile.write(bytes(str(warning_error), "utf8"))
 
         path = self.path
 
@@ -158,20 +161,35 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif 'searchDrug' in path:
             active_ingredient = path.split("=")[1].split("&")[0]
-            limit = path.split("=")[2]
+            if "limit" in path:
+                limit = path.split("=")[2]
+                if limit == '':
+                    limit = 10
+            else:
+                limit = '10'
             search_ingredient(active_ingredient, limit)
             file = 'info.html'
             send_file(file)
 
         elif 'searchCompany' in path:
             company = path.split("=")[1].split("&")[0]
-            limit = path.split("=")[2]
+            if "limit" in path:
+                limit = path.split("=")[2]
+                if limit == '':
+                    limit = 10
+            else:
+                limit = '10'
             search_company(company, limit)
             file = 'info.html'
             send_file(file)
 
         elif 'listDrugs' in path:
-            limit = path.split("=")[1].split("&")[0]
+            if 'limit' in path:
+                limit = path.split("=")[1].split("&")[0]
+                if limit == '':
+                    limit = 10
+            else:
+                limit = '10'
             list_drugs(limit)
             file = 'info.html'
             send_file(file)
