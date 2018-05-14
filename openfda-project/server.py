@@ -12,8 +12,8 @@ PORT = 8000
 
 class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
-        status_code = 200
-        self.send_response(status_code)
+        status = 200
+        self.send_response(status)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
@@ -26,7 +26,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         def search_ingredient(active_ingredient, limit):
 
-            print(str(self.path))
 
             headers = {'User-Agent': 'http-client'}
 
@@ -217,21 +216,33 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             file = 'info.html'
             send_file(file)
         elif "secret" in path:
-            status_code=401
-            print("The status code is:" + status_code)
-            self.send_header('WWW-Authenticate', 'Basic realm="OpenFDA Private Zone"')
-            self.end_headers()
+            status +=401
+            print("You are nor authorized!Code:"+ status)
+
         elif "redirect" in path:
-            print("The status code is:" + status_code)
-            self.send_header('Location', 'http://localhost:8000/')
-            self.end_headers()
+            status += 302
+            print("You are being redirected. Code:" + status)
         else:
-            status_code=404
+            status +=404
             with open("not_found.html") as f:
                 message = f.read()
             self.wfile.write(bytes(message, "utf8"))
 
-        
+        self.send_response(status)
+
+        if "secret" in path:
+            self.send_header('WWW-Authenticate', 'Basic realm="OpenFDA Private Zone"')
+            self.end_headers()
+        elif "redirect" in path:
+            self.send_header('Location', 'http://localhost:8000/')
+            self.end_headers()
+        else:
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+        #self.send_header('Content-type', 'text/html')
+        #self.end_headers()
+
+
         print("Done")
 
         return
@@ -250,18 +261,3 @@ except KeyboardInterrupt:
 httpd.server_close()
 print("")
 print("Server stopped!")
-
-# Handler = http.server.SimpleHTTPRequestHandler
-Handler = testHTTPRequestHandler
-
-httpd = socketserver.TCPServer((IP, PORT), Handler)
-print("serving at port", PORT)
-try:
-    httpd.serve_forever()
-except KeyboardInterrupt:
-    pass
-
-httpd.server_close()
-print("")
-print("Server stopped!")
-
