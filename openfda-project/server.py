@@ -195,13 +195,23 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             send_file(file)
 
         elif 'listCompanies' in path:
-            limit = path.split("=")[1].split("&")[0]
+            if 'limit' in path:
+                limit = path.split("=")[1].split("&")[0]
+                if limit == '':
+                    limit = 10
+            else:
+                limit = '10'
             list_companies(limit)
             file = 'info.html'
             send_file(file)
 
         elif 'listWarnings' in path:
-            limit = path.split("=")[1].split("&")[0]
+            if 'limit' in path:
+                limit = path.split("=")[1].split("&")[0]
+                if limit == '':
+                    limit = 10
+            else:
+                limit = '10'
             list_warnings(limit)
             file = 'info.html'
             send_file(file)
