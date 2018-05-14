@@ -126,6 +126,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                     except KeyError:
                         company_error = "<li>" + "Not Found" + "</li>"
                         self.wfile.write(bytes(str(company_error), "utf8"))
+
         def list_warnings(limit):
 
             print(str(self.path))
@@ -215,13 +216,23 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             list_warnings(limit)
             file = 'info.html'
             send_file(file)
-
+        elif "secret" in path:
+            status_code=401
+            print("The status code is:" + status_code)
+            self.send_header('WWW-Authenticate', 'Basic realm="OpenFDA Private Zone"')
+            self.end_headers()
+        elif "redirect" in path:
+            print("The status code is:" + status_code)
+            self.send_header('Location', 'http://localhost:8000/')
+            self.end_headers()
         else:
+            status_code=404
             with open("not_found.html") as f:
                 message = f.read()
             self.wfile.write(bytes(message, "utf8"))
 
-        print("File served!")
+        
+        print("Done")
 
         return
 

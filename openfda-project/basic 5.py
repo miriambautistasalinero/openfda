@@ -140,7 +140,8 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         elif "listWarnings" in self.path:
             parame = self.path.split("?")[1]
-            if parame.split("=")[1]== "":
+            if listcompany in self.path:
+
                 listcompany= str(10)
             else:
                 listcompany = parame.split("=")[1]
@@ -164,6 +165,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 except KeyError:
                     warning_error = "<li>" + "Not Found" + "</li>"
                     self.wfile.write(bytes(str(warning_error), "utf8"))
+
 
 
 
