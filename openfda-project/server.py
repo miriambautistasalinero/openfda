@@ -22,7 +22,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         # Send message back to client
         message = ''
         if self.path == "/":
-            with open("basicfinal.html", "r") as s: #we open search
+            with open("openfda.html", "r") as s: #we open search
                 message = s.read()#lee search y lo ejecuta
             self.wfile.write(bytes(message, "utf8")) #esto es lo que le llega al cliente
         #en caso de que tenga más parametros que solo \
@@ -31,10 +31,10 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "searchDrug" in self.path:
             parame =self.path.split("?")[1]
             active_ingredient = parame.split("=")[1].split("&")[0]
-            if parame.split("&")[1] =='':
-                limit =10
-            else:
-                limit= parame.split("&")[1] ==''
+            try:
+                limit = parame.split("&")[1]
+            except IndexError:
+                limit = 10
 
             headers = {'User-Agent': 'http-client'}
             query1="/drug/label.json?search=active_ingredient=" + active_ingredient + "&" + limit
@@ -59,9 +59,9 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             parame =self.path.split("?")[1]
             company_name = parame.split("=")[1].split("&")[0]
             if parame.split("&")[1] == '':
-                limit=10
+                limit = "10"
             else:
-                limit= parame.split("&")[1]
+                limit = parame.split("&")[1]
 
             headers = {'User-Agent': 'http-client'}
             query = "/drug/label.json?search=openfda.manufacturer_name:" + company_name + "&"+ limit
@@ -86,7 +86,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "listDrug" in self.path:
             parame = self.path.split("?")[1]
             if parame.split("=")[1]== '':
-                listdrug=10
+                listdrug= str(10)
             else:
                 listdrug= parame.split("=")[1]
 
@@ -114,7 +114,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "listCompany" in self.path:
             parame = self.path.split("?")[1]
             if  parame.split("=")[1]=="":
-                listcompany = 10
+                listcompany = str(10)
             else:
                 listcompany = parame.split("=")[1]
 
@@ -141,7 +141,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         elif "listWarnings" in self.path:
             parame = self.path.split("?")[1]
             if parame.split("=")[1]== "":
-                listcompany=10
+                listcompany= str(10)
             else:
                 listcompany = parame.split("=")[1]
 
