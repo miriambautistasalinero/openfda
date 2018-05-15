@@ -153,7 +153,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.wfile.write(bytes(str(warning_error), "utf8"))
 
         path = self.path
-        status= 200
 
         if path == "/":
             with open("search.html") as f:
@@ -234,15 +233,16 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         if status == 401:
             self.send_header('WWW-Authenticate', 'Basic realm="OpenFDA Private Zone"')
+            self.end_header()
 
         elif status == 302:
             self.send_header('Location', 'http://localhost:8000/')
-
+            self.end_header()
         else:
             self.send_header('Content-type', 'text/html')
+            self.end_header()
 
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+
 
 
 
