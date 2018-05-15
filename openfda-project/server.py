@@ -153,18 +153,7 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.wfile.write(bytes(str(warning_error), "utf8"))
 
         path = self.path
-
-        if "secret" in path:
-            status =401
-            print("You are nor authorized!Code:"+ str(status))
-
-        elif "redirect" in path:
-            status = 302
-            print("You are being redirected. Code:" + str(status))
-        else:
-            status =404
-        
-
+        status= 200
 
         if path == "/":
             with open("search.html") as f:
@@ -228,32 +217,33 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             file = 'info.html'
             send_file(file)
 
-        elif "secret" in path:
-            status +=401
-            print("You are nor authorized!Code:"+ str(status))
+        if "secret" in path:
+            status = 401
+            print("You are not authorized!Code:"+ str(status))
 
         elif "redirect" in path:
-            status += 302
+            status = 302
             print("You are being redirected. Code:" + str(status))
         else:
-            status +=404
-            with open("not_found.html") as f:
-                message = f.read()
-            self.wfile.write(bytes(message, "utf8"))
+            status = 404
+            print("There must have been an error.Code:" + str(status))
+            with open('error.html', 'r') as e:
+                message = e.read()
 
         self.send_response(status)
 
-        if "secret" in path:
+        if status == 401:
             self.send_header('WWW-Authenticate', 'Basic realm="OpenFDA Private Zone"')
-            self.end_headers()
-        elif "redirect" in path:
+
+        elif status == 302:
             self.send_header('Location', 'http://localhost:8000/')
-            self.end_headers()
+
         else:
             self.send_header('Content-type', 'text/html')
-            self.end_headers()
-        #self.send_header('Content-type', 'text/html')
-        #self.end_headers()
+
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+
 
 
         print("Done")
