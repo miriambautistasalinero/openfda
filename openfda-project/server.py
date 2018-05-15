@@ -6,7 +6,7 @@ import json
 socketserver.TCPServer.allow_reuse_address = True
 
 # -- IP and the port of the server
-IP = "localhost"  # Localhost means "I": your local machine
+IP = "localhost"
 PORT = 8000
 
 
@@ -17,7 +17,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
-        # Send message back to client
 
         def send_file(file):
             with open(file) as f:
@@ -25,8 +24,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(bytes(message, "utf8"))
 
         def search_ingredient(active_ingredient, limit):
-
-
             headers = {'User-Agent': 'http-client'}
 
             conn = http.client.HTTPSConnection("api.fda.gov")
@@ -50,9 +47,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.wfile.write(bytes(str(drugai_error), "utf8"))
 
         def search_company(company, limit):
-
-            print(str(self.path))
-
             headers = {'User-Agent': 'http-client'}
 
             conn = http.client.HTTPSConnection("api.fda.gov")
@@ -76,9 +70,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.wfile.write(bytes(str(companyerror), "utf8"))
 
         def list_drugs(limit):
-
-            print(str(self.path))
-
             headers = {'User-Agent': 'http-client'}
 
             conn = http.client.HTTPSConnection("api.fda.gov")
@@ -101,9 +92,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.wfile.write(bytes(str(drug_error), "utf8"))
 
         def list_companies(limit):
-
-            print(str(self.path))
-
             headers = {'User-Agent': 'http-client'}
 
             conn = http.client.HTTPSConnection("api.fda.gov")
@@ -127,9 +115,6 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                         self.wfile.write(bytes(str(company_error), "utf8"))
 
         def list_warnings(limit):
-
-            print(str(self.path))
-
             headers = {'User-Agent': 'http-client'}
 
             conn = http.client.HTTPSConnection("api.fda.gov")
@@ -233,20 +218,16 @@ class testHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
         if status == 401:
             self.send_header('WWW-Authenticate', 'Basic realm="OpenFDA Private Zone"')
-            self.end_header()
+            self.end_headers()
 
         elif status == 302:
             self.send_header('Location', 'http://localhost:8000/')
-            self.end_header()
+            self.end_headers()
         else:
             self.send_header('Content-type', 'text/html')
-            self.end_header()
+            self.end_headers()
 
 
-
-
-
-        print("Done")
 
         return
 
